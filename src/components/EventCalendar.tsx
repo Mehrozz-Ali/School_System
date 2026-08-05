@@ -14,19 +14,19 @@ const events = [
         id: 1,
         title: "Lorem ipsum dolor",
         time: "12:00 PM - 2:00 PM",
-        description: "Lorem ipsum dolor sit amet,consectetur adipiscing elit."
+        description: "Lorem ipsum dolor sit amet,consectetur."
     },
     {
         id: 2,
         title: "Lorem ipsum dolor",
         time: "12:00 PM - 2:00 PM",
-        description: "Lorem ipsum dolor sit amet,consectetur adipiscing elit."
+        description: "Lorem ipsum dolor sit amet,consectetur."
     },
     {
         id: 3,
         title: "Lorem ipsum dolor",
         time: "12:00 PM - 2:00 PM",
-        description: "Lorem ipsum dolor sit amet,consectetur adipiscing elit."
+        description: "Lorem ipsum dolor sit amet,consectetur."
     }
 ]
 
