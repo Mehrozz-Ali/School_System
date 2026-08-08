@@ -1,5 +1,6 @@
 import Announcements from "@/components/Announcements"
 import BigCalender from "@/components/BigCalender"
+import FormModel from "@/components/FormModel"
 import Performance from "@/components/Performance"
 import Image from "next/image"
 import Link from "next/link"
@@ -19,7 +20,23 @@ const SingleTeacherPage = () => {
             </div>
 
             <div className="w-2/3 flex flex-col justify-between gap-4">
-              <h1 className="text-xl font-semibold">Leonard Snyder</h1>
+              <div className="flex items-center gap-4">
+                <h1 className="text-xl font-semibold">Leonard Snyder</h1>
+                <FormModel table="teacher" type="update" data={{
+                  id: 1,
+                  username: "leonard",
+                  email: "leonard@gmail.com",
+                  password: "123456",
+                  firstName: "Leonard",
+                  lastname: "Snyder",
+                  phone: "+92 324 1050966",
+                  address: "123 Street, City, Country",
+                  bloodType: "A+",
+                  birthday: "2027-01-01",
+                  sex: "male",
+                  img: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=1200"
+                }} />
+              </div>
               <p className="text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
               <div className="flex items-center justify-between gap-2 flex-wrap text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2">
