@@ -34,7 +34,7 @@ model Student{
   classId Int
   class Class @relation(fields:[classId],references:[id])
   gradeId Int
-  grade Class @relation(fields:[gradeId],references:[id])
+  grade Grade @relation(fields:[gradeId],references:[id])
   attendances Attendance[]
   results Result[]
 }
@@ -83,9 +83,9 @@ model Class{
   lesson Lesson[]
   student Student[]
   gradeId Int
-  grade Class @relation(fields:[gradeId],references:[id])
+  grade Grade @relation(fields:[gradeId],references:[id])
   events Event[]
-  annouoncements Annouoncement[]
+  announcements Announcement[]
 }
 
 model Subject{
@@ -108,7 +108,7 @@ model Lesson{
   class Class @relation(fields:[classId],references:[id])
   teacherId String
   teacher Teacher @relation(fields:[teacherId],references:[id])
-  exams Exams[]
+  exams Exam[]
   assignments Assignment[]
   attendances Attendance[]
 }
@@ -120,7 +120,7 @@ model Exam{
     endTime DateTime
     
     lessonId Int
-    lesson Lesson @relation(fields:(lessonId), references:[id])
+    lesson Lesson @relation(fields:[lessonId], references:[id])
     results Result[]
 }
 
@@ -131,8 +131,8 @@ model Assignment{
     dueDate DateTime
 
     lessonId Int
-    lesson Lesson @relation(fields:(lessonId), references:[id])
-    result Result[]
+    lesson Lesson @relation(fields:[lessonId], references:[id])
+    results Result[]
 }
 
 model Result{
@@ -140,7 +140,7 @@ model Result{
     score Int
 
     examId Int?
-    exam Exam @relation(fields:[examId], references:[id])
+    exam Exam? @relation(fields:[examId], references:[id])
     assignmentId Int?
     assignment Assignment? @relation(fields:[assignmentId], references:[id])
     studentId String
@@ -149,13 +149,13 @@ model Result{
 
 model Attendance{
     id Int @id @default(autoincrement())
-    data DateTime
+    date DateTime
     present Boolean
 
     studentId String
     student Student @relation(fields:[studentId],references:[id])
     lessonId Int
-    lesson Lesson @relation(fields:(lessonId), references:[id])
+    lesson Lesson @relation(fields:[lessonId], references:[id])
 
 }
 
@@ -172,7 +172,7 @@ model Event{
 }
 
 
-model Annouoncement{
+model Announcement{
     id Int @id @default(autoincrement())
     title String
     description String
@@ -188,15 +188,15 @@ model Annouoncement{
 
 
 
-enum UserSex (
+enum UserSex {
   MALE 
   FEMALE
-)
+}
 
-enum Day(
+enum Day{
   MONDAY
   TUESDAY 
   WEDNESDAY
   THURSDAY
   FRIDAY
-)
+}
