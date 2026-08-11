@@ -60,7 +60,7 @@ const TeacherListPage = async ({ searchParams }: { searchParams: { [key: string]
     const { page, ...queryParams } = searchParams
     const p = page ? parseInt(page) : 1;
 
-    
+
 
     const [data, count] = await prisma.$transaction([
         prisma.teacher.findMany({
@@ -104,9 +104,7 @@ const TeacherListPage = async ({ searchParams }: { searchParams: { [key: string]
             </div>
 
             {/* PAGINATION */}
-            <div className="">
-                <Pagination />
-            </div>
+            <Pagination page={p} count={count} />
         </div>
     )
 }
