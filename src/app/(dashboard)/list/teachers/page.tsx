@@ -69,16 +69,17 @@ const TeacherListPage = async ({ searchParams }: { searchParams: { [key: string]
         for (const [key, value] of Object.entries(queryParams)) {
             if (value !== undefined) {
                 switch (key) {
-                    case "classId": {
+                    case "classId":
                         const classId = parseInt(value);
                         if (!isNaN(classId)) {
                             query.lessons = { some: { classId } };
                         }
-                    }
                         break;
-                    case "search": {
-                        query.name = {contains:value,mode:"insensitive"}
-                    }
+                    case "search":
+                        query.name = { contains: value, mode: "insensitive" }
+                        break;
+                    default:
+                        break;
                     // query.lessons = {
                     //     some: { classId: parseInt(value) }
                     // }
