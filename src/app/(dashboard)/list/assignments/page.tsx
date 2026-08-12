@@ -121,14 +121,11 @@ const AssignmentListPage = async ({ searchParams }: { searchParams: { [key: stri
             </div>
 
             {/* LIST */}
-            <div className="">
-                <Table columns={columns} renderRow={renderRow} data={data} />
-            </div>
+            <Table columns={columns} renderRow={renderRow} data={data} />
 
             {/* PAGINATION */}
-            <div className="">
-                <Pagination page={p} count={count} />
-            </div>
+            <Pagination page={p} count={count} />
+
         </div>
     )
 }
