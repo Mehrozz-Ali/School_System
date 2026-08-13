@@ -3,11 +3,15 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Announcement, Class, Prisma } from "@/generated/prisma";
-import { announcementsData, eventsData, role, } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
-import Link from "next/link";
+
+
+const { sessionClaims } = await auth();
+const role = (sessionClaims?.metadata as { role?: string })?.role;
+
 
 type AnnouncementList = Announcement & { class: Class };
 
@@ -16,7 +20,7 @@ const columns = [
     { header: "Title", accessor: "title" },
     { header: "Class ", accessor: "class", },
     { header: "Date ", accessor: "date", className: "hidden lg:table-cell " },
-    { header: "Action", accessor: "action" },
+    ...(role === "admin" ? [{ header: "Action", accessor: "action" }] : []),
 ]
 
 
@@ -29,7 +33,6 @@ const renderRow = (item: AnnouncementList) => (
 
         <td>
             <div className="flex items-center gap-2 ">
-
                 {role === "admin" && (
                     <>
                         <FormModel table="announcement" type="update" data={item} />
