@@ -3,9 +3,28 @@
 
 import * as Clerk from '@clerk/elements/common';
 import * as SignIn from '@clerk/elements/sign-in';
+import { useUser } from '@clerk/nextjs';
 import Image from 'next/image'
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const LoginPage = () => {
+
+    const { isSignedIn, user, isLoaded } = useUser()
+
+    const router = useRouter()
+
+    useEffect(() => {
+        const role = user?.publicMetadata.role;
+
+        if (role) {
+            router.push(`/${role}`)
+        }
+    }, [user, router])
+
+
+
+
     return (
         <div className="h-screen flex items-center justify-center bg-lamaSkyLight">
             <SignIn.Root>
@@ -21,13 +40,13 @@ const LoginPage = () => {
                     <Clerk.Field name='identifier' className="flex flex-col gap-2 ">
                         <Clerk.Label className="text-xs text-gray-500">Username</Clerk.Label>
                         <Clerk.Input type="text" required className="p-2 rounded-md ring-1 ring-gray-300" />
-                        <Clerk.FieldError className="text-xs text-red-400"/>
+                        <Clerk.FieldError className="text-xs text-red-400" />
                     </Clerk.Field>
 
                     <Clerk.Field name='password' className="flex flex-col gap-2 ">
                         <Clerk.Label className="text-xs text-gray-500">Password</Clerk.Label>
                         <Clerk.Input type="password" required className="p-2 rounded-md ring-1 ring-gray-300" />
-                        <Clerk.FieldError className="text-xs text-red-400"/>
+                        <Clerk.FieldError className="text-xs text-red-400" />
                     </Clerk.Field>
 
                     <SignIn.Action submit className="bg-blue-500 text-white my-1 rounded-md text-sm p-[10px]">Sign In</SignIn.Action>

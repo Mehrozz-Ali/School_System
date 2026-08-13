@@ -103,14 +103,11 @@ const ClassListPage = async ({ searchParams }: { searchParams: { [key: string]: 
             </div>
 
             {/* LIST */}
-            <div className="">
-                <Table columns={columns} renderRow={renderRow} data={data} />
-            </div>
+            <Table columns={columns} renderRow={renderRow} data={data} />
 
             {/* PAGINATION */}
-            <div className="">
-                <Pagination page={p} count={count} />
-            </div>
+            <Pagination page={p} count={count} />
+
         </div>
     )
 }
