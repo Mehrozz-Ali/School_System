@@ -3,10 +3,15 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Assignment, Class, Prisma, Subject, Teacher } from "@/generated/prisma";
-import { assignmentsData, role, } from "@/lib/data";
+import { role } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { currentUserId } from "@/lib/utils";
 import Image from "next/image";
+
+
+
+
 
 type AssignmentList = Assignment & {
     lesson: {
@@ -22,7 +27,7 @@ const columns = [
     { header: "Class ", accessor: "class", },
     { header: "Teacher ", accessor: "teacher", className: "hidden lg:table-cell " },
     { header: "Due Date", accessor: "dueDate", className: "hidden lg:table-cell " },
-    { header: "Action", accessor: "action" },
+    ...(role === "admin" || role === "teacher" ? [{ header: "Action", accessor: "action" }] : []),
 ]
 
 
@@ -35,7 +40,7 @@ const renderRow = (item: AssignmentList) => (
 
         <td>
             <div className="flex items-center gap-2 ">
-                {role === "admin" && (
+                {(role === "admin" || role === "teacher") && (
                     <>
                         <FormModel table="assignment" type="update" data={item} />
                         <FormModel table="assignment" type="delete" id={item.id} />
@@ -56,21 +61,21 @@ const AssignmentListPage = async ({ searchParams }: { searchParams: { [key: stri
     // URL  PARAMS CONDITIONS
     const query: Prisma.AssignmentWhereInput = {};
 
+    query.lesson = {};
+
     if (queryParams) {
         for (const [key, value] of Object.entries(queryParams)) {
             if (value !== undefined) {
                 switch (key) {
                     case "classId":
-                        query.lesson = { classId: parseInt(value) };
+                        query.lesson.classId = parseInt(value);
                         break;
                     case "teacherId":
-                        query.lesson = { teacherId: value };
+                        query.lesson.teacherId = value;
                         break;
                     case "search":
-                        query.lesson = {
-                            subject: {
-                                name: { contains: value, mode: "insensitive" }
-                            }
+                        query.lesson.subject = {
+                            name: { contains: value, mode: "insensitive" },
                         }
                         break;
                     default:
@@ -78,6 +83,36 @@ const AssignmentListPage = async ({ searchParams }: { searchParams: { [key: stri
                 }
             }
         }
+    }
+
+    // Role conditions
+    switch (role) {
+        case "admin":
+            break;
+        case "teacher":
+            query.lesson.teacherId = currentUserId!;
+            break;
+        case "student":
+            query.lesson.class = {
+                students: {
+                    some: {
+                        id: currentUserId!
+                    }
+                }
+            }
+            break;
+        case "parent":
+            query.lesson.class = {
+                students: {
+                    some: {
+                        parentId: currentUserId!
+                    }
+                }
+            }
+            break;
+
+        default:
+            break;
     }
 
 
@@ -103,7 +138,7 @@ const AssignmentListPage = async ({ searchParams }: { searchParams: { [key: stri
         <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
             {/* TOP */}
             <div className=" flex items-center justify-between">
-                <h1 className="hidden md:block text-lg font-semibold">All Exams</h1>
+                <h1 className="hidden md:block text-lg font-semibold">All Assignments</h1>
                 <div className="flex flex-col md:flex-row  items-center gap-4 w-full md:w-auto">
                     <TableSearch />
                     <div className="flex items-center gap-4 self-end ">

@@ -5,12 +5,11 @@ import TableSearch from "@/components/TableSearch";
 import { Announcement, Class, Prisma } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { auth } from "@clerk/nextjs/server";
 import Image from "next/image";
+import { role } from "@/lib/data"
 
 
-const { sessionClaims } = await auth();
-const role = (sessionClaims?.metadata as { role?: string })?.role;
+
 
 
 type AnnouncementList = Announcement & { class: Class };
@@ -66,6 +65,10 @@ const AnnouncementListPage = async ({ searchParams }: { searchParams: { [key: st
             }
         }
     }
+
+
+
+
 
 
     const [data, count] = await prisma.$transaction([
