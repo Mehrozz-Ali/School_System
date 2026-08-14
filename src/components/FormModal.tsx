@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useActionState, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { FormContainerProps } from "./FormContainer";
 
 
 
@@ -71,24 +72,7 @@ const forms: {
 }
 
 
-const FormModel = ({ table, type, data, id }: {
-    table:
-    | "teacher"
-    | "student"
-    | "parent"
-    | "subject"
-    | "class"
-    | "lesson"
-    | "exam"
-    | "assignment"
-    | "result"
-    | "attendance"
-    | "event"
-    | "announcement";
-    type: "create" | "update" | "delete";
-    data?: any;
-    id?: number | string;
-}) => {
+const FormModel = ({ table, type, data, id }: FormContainerProps) => {
 
     const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
     const bgColor = type === "create" ? "bg-lamaYellow" : type === "update" ? "bg-lamaSky" : "bg-lamaPurple";

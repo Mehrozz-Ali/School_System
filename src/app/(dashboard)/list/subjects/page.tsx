@@ -1,4 +1,5 @@
-import FormModel from "@/components/FormModel";
+import FormContainer from "@/components/FormContainer";
+import FormModel from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -28,8 +29,8 @@ const renderRow = (item: SubjectList) => (
             <div className="flex items-center gap-2 ">
                 {role === "admin" && (
                     <>
-                        <FormModel table="subject" type="update" data={item} />
-                        <FormModel table="subject" type="delete" id={item.id} />
+                        <FormContainer table="subject" type="update" data={item} />
+                        <FormContainer table="subject" type="delete" id={item.id} />
                     </>
                 )}
             </div>
@@ -44,7 +45,6 @@ const SubjectListPage = async ({ searchParams }: { searchParams: { [key: string]
     const p = page ? parseInt(page) : 1;
 
     // URL  PARAMS CONDITIONS
-
     const query: Prisma.SubjectWhereInput = {};
 
 
@@ -99,14 +99,10 @@ const SubjectListPage = async ({ searchParams }: { searchParams: { [key: string]
             </div>
 
             {/* LIST */}
-            <div className="">
-                <Table columns={columns} renderRow={renderRow} data={data} />
-            </div>
+            <Table columns={columns} renderRow={renderRow} data={data} />
 
             {/* PAGINATION */}
-            <div className="">
-                <Pagination page={p} count={count} />
-            </div>
+            <Pagination page={p} count={count} />
         </div>
     )
 }

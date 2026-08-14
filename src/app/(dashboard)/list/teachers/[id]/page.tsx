@@ -1,6 +1,6 @@
 import Announcements from "@/components/Announcements"
 import BigCalender from "@/components/BigCalender"
-import FormModel from "@/components/FormModel"
+import FormModel from "@/components/FormModal"
 import Performance from "@/components/Performance"
 import Image from "next/image"
 import Link from "next/link"
