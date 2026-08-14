@@ -27,7 +27,7 @@ const schema = z.object({
 type Inputs = z.infer<typeof schema>
 
 
-const TeacherForm = ({ type, data, setOpen }: { type: "create" | "update"; data?: any, setOpen: Dispatch<SetStateAction<boolean>> }) => {
+const TeacherForm = ({ type, data, setOpen, relatedData }: { type: "create" | "update"; data?: any, setOpen: Dispatch<SetStateAction<boolean>>, relatedData?: any }) => {
 
     const {
         register,

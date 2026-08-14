@@ -52,11 +52,11 @@ const AttendanceForm = dynamic(() => import("./forms/AttendanceForm"));
 
 
 const forms: {
-    [key: string]: (setOpen: Dispatch<SetStateAction<boolean>>, type: "create" | "update", data?: any) => JSX.Element;
+    [key: string]: (setOpen: Dispatch<SetStateAction<boolean>>, type: "create" | "update", data?: any, relatedData?: any) => JSX.Element;
 } = {
-    teacher: (setOpen, type, data) => <TeacherForm type={type} data={data} setOpen={setOpen} />,
-    student: (setOpen, type, data) => <StudentForm type={type} data={data} setOpen={setOpen} />,
-    subject: (setOpen, type, data) => <SubjectForm type={type} data={data} setOpen={setOpen} />,
+    teacher: (setOpen, type, data, relatedData) => <TeacherForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
+    student: (setOpen, type, data, relatedData) => <StudentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
+    subject: (setOpen, type, data, relatedData) => <SubjectForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
 
 
     // parent: (type, data) => <ParentForm type={type} data={data} />,
@@ -72,7 +72,7 @@ const forms: {
 }
 
 
-const FormModel = ({ table, type, data, id }: FormContainerProps) => {
+const FormModel = ({ table, type, data, id, relatedData }: FormContainerProps & { relatedData?: any }) => {
 
     const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
     const bgColor = type === "create" ? "bg-lamaYellow" : type === "update" ? "bg-lamaSky" : "bg-lamaPurple";
@@ -99,7 +99,7 @@ const FormModel = ({ table, type, data, id }: FormContainerProps) => {
                 <button className="bg-red-700 text-white py-2 px-4 rounded-md border-none w-max self-center">Delete</button>
             </form>
         ) : type === "create" || type === "update" ? (
-            forms[table](setOpen, type, data)
+            forms[table](setOpen, type, data, relatedData)
         ) : "form not found";
     }
 
