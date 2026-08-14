@@ -3,9 +3,9 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Class, Lesson, Prisma, Subject, Teacher } from "@/generated/prisma";
-import { lessonsData, role, } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { role } from "@/lib/utils";
 import Image from "next/image";
 
 
@@ -17,7 +17,7 @@ const columns = [
     { header: "Subject Name", accessor: "name" },
     { header: "Class ", accessor: "class", },
     { header: "Teacher ", accessor: "teacher", className: "hidden lg:table-cell " },
-    { header: "Action", accessor: "action" },
+    ...(role === "admin" ? [{ header: "Action", accessor: "action" }] : []),
 ]
 
 const renderRow = (item: LessonList) => (

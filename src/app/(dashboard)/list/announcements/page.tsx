@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import Image from "next/image";
 import { role } from "@/lib/data"
+import { currentUserId } from "@/lib/utils";
 
 
 
@@ -27,7 +28,7 @@ const columns = [
 const renderRow = (item: AnnouncementList) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
         <td className="flex items-center gap-4 p-4 ">{item.title}</td>
-        <td >{item.class.name}</td>
+        <td >{item.class?.name || "-"}</td>
         <td className="hidden md:table-cell">{new Intl.DateTimeFormat("en-US").format(item.date)}</td>
 
         <td>
@@ -65,6 +66,18 @@ const AnnouncementListPage = async ({ searchParams }: { searchParams: { [key: st
             }
         }
     }
+
+    // ROLE Conditions
+    const roleConditions = {
+        teacher: { lesson: { some: { teacherId: currentUserId! } } },
+        student: { students: { some: { id: currentUserId! } } },
+        parent: { students: { some: { parentId: currentUserId! } } }
+    };
+
+
+    query.OR = [{ classId: null }, {
+        class: roleConditions[role as keyof typeof roleConditions] || {}
+    }]
 
 
 

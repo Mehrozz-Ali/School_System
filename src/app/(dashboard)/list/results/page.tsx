@@ -3,11 +3,10 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Prisma } from "@/generated/prisma";
-import { resultsData, role, } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { currentUserId, role } from "@/lib/utils";
 import Image from "next/image";
-import Link from "next/link";
 
 type ResultList = {
     id: number;
@@ -29,7 +28,7 @@ const columns = [
     { header: "Teacher ", accessor: "teacher", className: "hidden lg:table-cell " },
     { header: "Class ", accessor: "class", className: "hidden lg:table-cell " },
     { header: "Date", accessor: "date", className: "hidden lg:table-cell " },
-    { header: "Action", accessor: "action" },
+    ...(role === "admin" || role === "teacher" ? [{ header: "Action", accessor: "action" }] : []),
 ]
 
 const renderRow = (item: ResultList) => (
@@ -43,7 +42,7 @@ const renderRow = (item: ResultList) => (
 
         <td>
             <div className="flex items-center gap-2 ">
-                {role === "admin" && (
+                {(role === "admin" || role === "teacher") && (
                     <>
                         <FormModel table="result" type="update" data={item} />
                         <FormModel table="result" type="delete" id={item.id} />
@@ -82,6 +81,30 @@ const ResultListPage = async ({ searchParams }: { searchParams: { [key: string]:
                 }
             }
         }
+    }
+
+
+    // ROLE Conditions
+    switch (role) {
+        case "admin":
+            break;
+        case "teacher":
+            query.OR = [
+                { exam: { lesson: { teacherId: currentUserId! } } },
+                { assignment: { lesson: { teacherId: currentUserId! } } }
+            ]
+            break;
+        case "student":
+            query.studentId = currentUserId!;
+            break;
+        case "parent":
+            query.student = {
+                parentId: currentUserId!
+            }
+            break;
+
+        default:
+            break;
     }
 
 
@@ -156,7 +179,7 @@ const ResultListPage = async ({ searchParams }: { searchParams: { [key: string]:
                         <button className="w-8 h-8 flex items-center justify-center rounded-full bg-lamaYellow  ">
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
-                        {role === "admin" && (
+                        {(role === "admin" || role === "teacher") && (
                             <FormModel table="result" type="create" />
                         )}
                     </div>

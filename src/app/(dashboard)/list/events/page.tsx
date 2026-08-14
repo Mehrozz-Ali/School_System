@@ -3,9 +3,9 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Class, Event, Prisma } from "@/generated/prisma";
-import { role, } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { currentUserId, role } from "@/lib/utils";
 import Image from "next/image";
 
 
@@ -18,7 +18,7 @@ const columns = [
     { header: "Date ", accessor: "date", className: "hidden lg:table-cell " },
     { header: "Start time ", accessor: "startTime", className: "hidden lg:table-cell " },
     { header: "End time ", accessor: "endTime", className: "hidden lg:table-cell " },
-    { header: "Action", accessor: "action" },
+    ...(role === "admin" ? [{ header: "Action", accessor: "action" }] : []),
 ]
 
 
@@ -26,7 +26,7 @@ const columns = [
 const renderRow = (item: EventList) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
         <td className="flex items-center gap-4 p-4 ">{item.title}</td>
-        <td >{item.class.name}</td>
+        <td >{item.class?.name || "-"}</td>
         <td className="hidden md:table-cell">{new Intl.DateTimeFormat("en-US").format(item.startTime)}</td>
         <td className="hidden md:table-cell">{item.startTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}</td>
         <td className="hidden md:table-cell">{item.endTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}</td>
@@ -66,6 +66,19 @@ const EventListPage = async ({ searchParams }: { searchParams: { [key: string]: 
             }
         }
     }
+
+
+    // ROLE Conditions
+    const roleConditions = {
+        teacher: { lesson: { some: { teacherId: currentUserId! } } },
+        student: { students: { some: { id: currentUserId! } } },
+        parent: { students: { some: { parentId: currentUserId! } } }
+    };
+
+
+    query.OR = [{ classId: null }, {
+        class: roleConditions[role as keyof typeof roleConditions] || {}
+    }]
 
 
     const [data, count] = await prisma.$transaction([

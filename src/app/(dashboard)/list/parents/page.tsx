@@ -3,9 +3,9 @@ import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { Parent, Prisma, Student } from "@/generated/prisma";
-import { parentsData, role, } from "@/lib/data";
 import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
+import { role } from "@/lib/utils";
 import Image from "next/image";
 
 type ParentList = Parent & { students: Student[] }
@@ -16,7 +16,7 @@ const columns = [
     { header: "Student Names ", accessor: "students", className: "hidden md:table-cell " },
     { header: "Phone ", accessor: "phone", className: "hidden lg:table-cell " },
     { header: "Address ", accessor: "address", className: "hidden lg:table-cell " },
-    { header: "Action", accessor: "action" },
+    ...(role === "admin" ? [{ header: "Action", accessor: "action" }] : []),
 ]
 const renderRow = (item: ParentList) => (
     <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
