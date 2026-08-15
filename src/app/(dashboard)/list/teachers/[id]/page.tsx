@@ -1,11 +1,37 @@
 import Announcements from "@/components/Announcements"
-import BigCalender from "@/components/BigCalender"
-import FormModel from "@/components/FormModal"
+import BigCalendarContainer from "@/components/BigCalendarContainer"
+import FormContainer from "@/components/FormContainer"
 import Performance from "@/components/Performance"
+import { Teacher } from "@/generated/prisma"
+import { prisma } from "@/lib/prisma"
+import { auth } from "@clerk/nextjs/server"
 import Image from "next/image"
 import Link from "next/link"
+import { notFound } from "next/navigation"
 
-const SingleTeacherPage = () => {
+const SingleTeacherPage = async ({ params: { id } }: { params: { id: string } }) => {
+
+  const { sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+
+
+  const teacher: (Teacher & { _count: { subjects: number, lessons: number, classes: number } }) | null = await prisma.teacher.findUnique({
+    where: { id },
+    include: {
+      _count: {
+        select: {
+          subjects: true,
+          lessons: true,
+          classes: true,
+        }
+      }
+    }
+  })
+
+  if (!teacher) {
+    return notFound();
+  }
+
   return (
     <div className=" flex flex-1 p-4 flex-col xl:flex-row gap-4">
       {/* LEFT */}
@@ -16,44 +42,33 @@ const SingleTeacherPage = () => {
           {/* userInfo card */}
           <div className="bg-lamaSky py-6 px-2 rounded-md flex-1 flex gap-4">
             <div className="w-1/3 ">
-              <Image src="https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=1200" alt="" width={144} height={144} className="w-36 h-36  rounded-full object-cover" />
+              <Image src={teacher.img || "/noAvatar.png"} alt="" width={144} height={144} className="w-36 h-36  rounded-full object-cover" />
             </div>
 
             <div className="w-2/3 flex flex-col justify-between gap-4">
               <div className="flex items-center gap-4">
-                <h1 className="text-xl font-semibold">Leonard Snyder</h1>
-                <FormModel table="teacher" type="update" data={{
-                  id: 1,
-                  username: "leonard",
-                  email: "leonard@gmail.com",
-                  password: "123456",
-                  firstName: "Leonard",
-                  lastname: "Snyder",
-                  phone: "+92 324 1050966",
-                  address: "123 Street, City, Country",
-                  bloodType: "A+",
-                  birthday: "2027-01-01",
-                  sex: "male",
-                  img: "https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=1200"
-                }} />
+                <h1 className="text-xl font-semibold">{teacher.name + " " + teacher.surname}</h1>
+                {role === "admin" && (
+                  <FormContainer table="teacher" type="update" data={teacher} />
+                )}
               </div>
               <p className="text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
               <div className="flex items-center justify-between gap-2 flex-wrap text-xs font-medium">
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2">
                   <Image src="/blood.png" alt="" width={14} height={14} />
-                  <span>A+</span>
+                  <span>{teacher.bloodType}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2">
                   <Image src="/date.png" alt="" width={14} height={14} />
-                  <span>January 2027</span>
+                  <span>{new Intl.DateTimeFormat("en-GB").format(teacher.birthday)}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2">
                   <Image src="/mail.png" alt="" width={14} height={14} />
-                  <span>user@gmail.com</span>
+                  <span>{teacher.email || "-"}</span>
                 </div>
                 <div className="w-full md:w-1/3 lg:w-full xl:w-1/3 flex items-center gap-2">
                   <Image src="/phone.png" alt="" width={14} height={14} />
-                  <span>+92 324 1050966</span>
+                  <span>{teacher.phone || "-"}</span>
                 </div>
               </div>
             </div>
@@ -73,7 +88,7 @@ const SingleTeacherPage = () => {
             <div className="bg-white p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
               <Image src="/singleBranch.png" alt="" width={24} height={24} className="w-6 h-6" />
               <div>
-                <h1 className="text-xl font-semibold">2</h1>
+                <h1 className="text-xl font-semibold">{teacher._count.subjects}</h1>
                 <span className="text-sm text-gray-400">Branches</span>
               </div>
             </div>
@@ -82,7 +97,7 @@ const SingleTeacherPage = () => {
             <div className="bg-white p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
               <Image src="/singleLesson.png" alt="" width={24} height={24} className="w-6 h-6" />
               <div>
-                <h1 className="text-xl font-semibold">6</h1>
+                <h1 className="text-xl font-semibold">{teacher._count.lessons}</h1>
                 <span className="text-sm text-gray-400">Lessons</span>
               </div>
             </div>
@@ -91,7 +106,7 @@ const SingleTeacherPage = () => {
             <div className="bg-white p-4 rounded-md flex gap-4 w-full md:w-[48%] xl:w-[45%] 2xl:w-[48%]">
               <Image src="/singleClass.png" alt="" width={24} height={24} className="w-6 h-6" />
               <div>
-                <h1 className="text-xl font-semibold">6</h1>
+                <h1 className="text-xl font-semibold">{teacher._count.classes}</h1>
                 <span className="text-sm text-gray-400">Classes</span>
               </div>
             </div>
@@ -103,7 +118,7 @@ const SingleTeacherPage = () => {
         {/* BOTTOM */}
         <div className="mt-4 bg-white rounded-md p-4 h-[800px] ">
           <h1>Teacher&apos;s Schedule</h1>
-          <BigCalender />
+          <BigCalendarContainer type="teacherId" id={teacher.id} />
         </div>
       </div>
 
