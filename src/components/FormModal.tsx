@@ -1,6 +1,6 @@
 "use client"
 
-import { deleteSubject } from "@/lib/actions";
+import { deleteClass, deleteSubject } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -13,7 +13,7 @@ import { FormContainerProps } from "./FormContainer";
 
 const deleteActionMap = {
     subject: deleteSubject,
-    class: deleteSubject,
+    class: deleteClass,
     teacher: deleteSubject,
     student: deleteSubject,
     parent: deleteSubject,
@@ -37,10 +37,14 @@ const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
     loading: () => <h1>Loading...</h1>
 })
 
+const ClassForm = dynamic(() => import("./forms/ClassForm"), {
+    loading: () => <h1>Loading...</h1>
+})
+
 const ParentForm = dynamic(() => import("./forms/ParentForm"));
 const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"));
 const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"));
-const ClassesForm = dynamic(() => import("./forms/ClassesForm"));
+const ClassesForm = dynamic(() => import("./forms/ClassForm"));
 const EventForm = dynamic(() => import("./forms/EventForm"));
 const ExamForm = dynamic(() => import("./forms/ExamForm"));
 const LessonForm = dynamic(() => import("./forms/LessonForm"));
@@ -57,10 +61,10 @@ const forms: {
     teacher: (setOpen, type, data, relatedData) => <TeacherForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
     student: (setOpen, type, data, relatedData) => <StudentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
     subject: (setOpen, type, data, relatedData) => <SubjectForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
+    class: (setOpen, type, data, relatedData) => <ClassForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
 
 
     // parent: (type, data) => <ParentForm type={type} data={data} />,
-    // class: (type, data) => <ClassesForm type={type} data={data} />,
     // lesson: (type, data) => <LessonForm type={type} data={data} />,
     // exam: (type, data) => <ExamForm type={type} data={data} />,
     // assignment: (type, data) => <AssignmentForm type={type} data={data} />,
@@ -72,7 +76,7 @@ const forms: {
 }
 
 
-const FormModel = ({ table, type, data, id, relatedData }: FormContainerProps & { relatedData?: any }) => {
+const FormModal = ({ table, type, data, id, relatedData }: FormContainerProps & { relatedData?: any }) => {
 
     const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
     const bgColor = type === "create" ? "bg-lamaYellow" : type === "update" ? "bg-lamaSky" : "bg-lamaPurple";
@@ -124,4 +128,4 @@ const FormModel = ({ table, type, data, id, relatedData }: FormContainerProps & 
     )
 }
 
-export default FormModel
+export default FormModal;

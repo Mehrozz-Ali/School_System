@@ -1,4 +1,4 @@
-import FormModel from "@/components/FormModal";
+import FormContainer from "@/components/FormContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -31,8 +31,8 @@ const renderRow = (item: ClassList) => (
 
                 {role === "admin" && (
                     <>
-                        <FormModel table="class" type="update" data={item} />
-                        <FormModel table="class" type="delete" id={item.id} />
+                        <FormContainer table="class" type="delete" id={item.id} />
+                        <FormContainer table="class" type="update" data={item} />
                     </>
                 )}
             </div>
@@ -96,7 +96,7 @@ const ClassListPage = async ({ searchParams }: { searchParams: { [key: string]: 
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
                         {role === "admin" && (
-                            <FormModel table="class" type="create" />
+                            <FormContainer table="class" type="create" />
                         )}
                     </div>
                 </div>
