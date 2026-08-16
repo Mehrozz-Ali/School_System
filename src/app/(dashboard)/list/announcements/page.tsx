@@ -8,7 +8,7 @@ import Image from "next/image";
 // import { role } from "@/lib/data"
 // import {role} from "@/lib/utils"
 import FormModal from "@/components/FormModal";
-import { auth } from "@clerk/nextjs/server";
+import { getUserRoleAndId } from "@/lib/utils";
 
 
 
@@ -27,11 +27,10 @@ type AnnouncementList = Announcement & { class: Class };
 
 
 
-const AnnouncementListPage = async ({ searchParams }: { searchParams: { [key: string]: string | undefined } }) => {
+const AnnouncementListPage = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) => {
     
-    const { userId, sessionClaims } = auth();
-    const role = (sessionClaims?.metadata as { role?: string })?.role;
-    const currentUserId = userId;
+    const { role, currentUserId } = await getUserRoleAndId();
+    const resolvedSearchParams = await searchParams;
     
     const columns = [
         { header: "Title", accessor: "title" },
@@ -59,7 +58,7 @@ const AnnouncementListPage = async ({ searchParams }: { searchParams: { [key: st
         </tr>
     )
 
-    const { page, ...queryParams } = searchParams
+    const { page, ...queryParams } = resolvedSearchParams
     const p = page ? parseInt(page) : 1;
 
     // URL  PARAMS CONDITIONS

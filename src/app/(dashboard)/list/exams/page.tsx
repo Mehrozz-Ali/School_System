@@ -5,7 +5,7 @@ import TableSearch from "@/components/TableSearch";
 import { Class, Exam, Prisma, Subject, Teacher } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
+import { getUserRoleAndId } from "@/lib/utils";
 import Image from "next/image";
 
 
@@ -17,39 +17,39 @@ type ExamList = Exam & {
     }
 }
 
+const ExamListPage = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) => {
+    const { role, currentUserId } = await getUserRoleAndId();
+    const resolvedSearchParams = await searchParams;
 
-const columns = [
-    { header: "Subject", accessor: "subject" },
-    { header: "Class ", accessor: "class", },
-    { header: "Teacher ", accessor: "teacher", className: "hidden lg:table-cell " },
-    { header: "Date", accessor: "date", className: "hidden lg:table-cell " },
-    ...(role === "admin" || role === "teacher" ? [{ header: "Action", accessor: "action" }] : []),
-]
+    const columns = [
+        { header: "Subject", accessor: "subject" },
+        { header: "Class ", accessor: "class", },
+        { header: "Teacher ", accessor: "teacher", className: "hidden lg:table-cell " },
+        { header: "Date", accessor: "date", className: "hidden lg:table-cell " },
+        ...(role === "admin" || role === "teacher" ? [{ header: "Action", accessor: "action" }] : []),
+    ]
 
+    const renderRow = (item: ExamList) => (
+        <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+            <td className="flex items-center gap-4 p-4 ">{item.lesson.subject.name}</td>
+            <td >{item.lesson.class.name}</td>
+            <td className="hidden md:table-cell">{item.lesson.teacher.name + " " + item.lesson.teacher.surname}</td>
+            <td className="hidden md:table-cell">{new Intl.DateTimeFormat("en-US").format(item.startTime)}</td>
 
-const renderRow = (item: ExamList) => (
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
-        <td className="flex items-center gap-4 p-4 ">{item.lesson.subject.name}</td>
-        <td >{item.lesson.class.name}</td>
-        <td className="hidden md:table-cell">{item.lesson.teacher.name + " " + item.lesson.teacher.surname}</td>
-        <td className="hidden md:table-cell">{new Intl.DateTimeFormat("en-US").format(item.startTime)}</td>
+            <td>
+                <div className="flex items-center gap-2 ">
+                    {(role === "admin" || role === "teacher") && (
+                        <>
+                            <FormContainer table="exam" type="update" data={item} />
+                            <FormContainer table="exam" type="delete" id={item.id} />
+                        </>
+                    )}
+                </div>
+            </td>
+        </tr>
+    )
 
-        <td>
-            <div className="flex items-center gap-2 ">
-                {(role === "admin" || role === "teacher") && (
-                    <>
-                        <FormContainer table="exam" type="update" data={item} />
-                        <FormContainer table="exam" type="delete" id={item.id} />
-                    </>
-                )}
-            </div>
-        </td>
-    </tr>
-)
-
-const ExamListPage = async ({ searchParams }: { searchParams: { [key: string]: string | undefined } }) => {
-
-    const { page, ...queryParams } = searchParams
+    const { page, ...queryParams } = resolvedSearchParams;
     const p = page ? parseInt(page) : 1;
 
     // URL  PARAMS CONDITIONS

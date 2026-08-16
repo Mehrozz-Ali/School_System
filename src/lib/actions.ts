@@ -515,7 +515,7 @@ export const deleteExam = async (currentState: CurrentState, data: FormData) => 
         await prisma.exam.delete({
             where: {
                 id: parseInt(id),
-                ...(role === "teacher" ? { lessons: { teacherId: userId! } } : {})
+                ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {})
             },
         });
 
@@ -548,7 +548,7 @@ export const createAssignment = async (currentState: CurrentState, data: Assignm
 
     try {
         if (role === "teacher") {
-            const teacherLesson = await prisma.assignment.findFirst({
+            const teacherLesson = await prisma.lesson.findFirst({
                 where: {
                     teacherId: userId!,
                     id: data.lessonId,
@@ -589,7 +589,7 @@ export const updateAssignment = async (currentState: CurrentState, data: Assignm
     try {
 
         if (role === "teacher") {
-            const teacherLesson = await prisma.assignment.findFirst({
+            const teacherLesson = await prisma.lesson.findFirst({
                 where: {
                     teacherId: userId!,
                     id: data.lessonId,
@@ -634,7 +634,7 @@ export const deleteAssignment = async (currentState: CurrentState, data: FormDat
         await prisma.assignment.delete({
             where: {
                 id: parseInt(id),
-                ...(role === "teacher" ? { lessons: { teacherId: userId! } } : {})
+                ...(role === "teacher" ? { lesson: { teacherId: userId! } } : {})
             },
         });
 

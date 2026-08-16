@@ -5,7 +5,8 @@ import CountChartContainer from "@/components/CountChartContainer";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
 
-const AdminPage = ({ searchParams }: { searchParams: { [keys: string]: string | undefined } }) => {
+const AdminPage = async ({ searchParams }: { searchParams: Promise<{ [keys: string]: string | undefined }> }) => {
+  const resolvedSearchParams = await searchParams;
   return (
     <div className='p-4 flex gap-4 flex-col md:flex-row'>
       {/* LEFT */}
@@ -41,7 +42,7 @@ const AdminPage = ({ searchParams }: { searchParams: { [keys: string]: string | 
       {/* RIGHT */}
       <div className="w-full lg:w-1/3 flex flex-col gap-8">
         {/* calendar */}
-        <EventCalendarContainer searchParams={searchParams} />
+        <EventCalendarContainer searchParams={resolvedSearchParams} />
         <Announcements />
       </div>
 

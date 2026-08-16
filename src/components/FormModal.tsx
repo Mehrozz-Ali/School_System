@@ -1,6 +1,6 @@
 "use client"
 
-import { deleteClass, deleteExam, deleteStudent, deleteSubject, deleteTeacher } from "@/lib/actions";
+import { deleteClass, deleteExam, deleteStudent, deleteSubject, deleteTeacher, deleteAssignment } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -8,22 +8,19 @@ import { Dispatch, SetStateAction, useActionState, useEffect, useState } from "r
 import { toast } from "react-toastify";
 import { FormContainerProps } from "./FormContainer";
 
-
-
-
 const deleteActionMap = {
     subject: deleteSubject,
     class: deleteClass,
     teacher: deleteTeacher,
     student: deleteStudent,
     exam: deleteExam,
-    // parent: deleteSubject,
-    // lesson: deleteSubject,
-    // assignment: deleteSubject,
-    // result: deleteSubject,
-    // attendance: deleteSubject,
-    // event: deleteSubject,
-    // announcement: deleteSubject,
+    assignment: deleteAssignment,
+    parent: async (currentState: any, data: FormData) => ({ success: false, error: true }),
+    lesson: async (currentState: any, data: FormData) => ({ success: false, error: true }),
+    result: async (currentState: any, data: FormData) => ({ success: false, error: true }),
+    attendance: async (currentState: any, data: FormData) => ({ success: false, error: true }),
+    event: async (currentState: any, data: FormData) => ({ success: false, error: true }),
+    announcement: async (currentState: any, data: FormData) => ({ success: false, error: true }),
 }
 
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {

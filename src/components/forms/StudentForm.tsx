@@ -115,7 +115,7 @@ const StudentForm = ({ type, data, setOpen, relatedData }: { type: "create" | "u
                     <label htmlFor="" className="text-xs text-gray-500">Class</label>
                     <select className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full" {...register("classId")} defaultValue={data?.classId}>
                         {classes.map((classItem: { id: number, name: string, capacity: number; _count: { students: number } }) => (
-                            <option value={classItem.id} key={classItem.id}>{classItem.name} - {classItem._count.students + "/" + classItem.capacity}(" ")Capacity</option>
+                            <option value={classItem.id} key={classItem.id}>{classItem.name} - {classItem._count.students + "/" + classItem.capacity} Capacity</option>
                         ))}
 
                     </select>

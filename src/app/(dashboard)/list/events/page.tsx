@@ -5,49 +5,47 @@ import TableSearch from "@/components/TableSearch";
 import { Class, Event, Prisma } from "@/generated/prisma";
 import { prisma } from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { currentUserId, role } from "@/lib/utils";
+import { getUserRoleAndId } from "@/lib/utils";
 import Image from "next/image";
 
 
 type EventList = Event & { class: Class };
 
+const EventListPage = async ({ searchParams }: { searchParams: Promise<{ [key: string]: string | undefined }> }) => {
+    const { role, currentUserId } = await getUserRoleAndId();
+    const resolvedSearchParams = await searchParams;
 
-const columns = [
-    { header: "Title", accessor: "title" },
-    { header: "Class ", accessor: "class", },
-    { header: "Date ", accessor: "date", className: "hidden lg:table-cell " },
-    { header: "Start time ", accessor: "startTime", className: "hidden lg:table-cell " },
-    { header: "End time ", accessor: "endTime", className: "hidden lg:table-cell " },
-    ...(role === "admin" ? [{ header: "Action", accessor: "action" }] : []),
-]
+    const columns = [
+        { header: "Title", accessor: "title" },
+        { header: "Class ", accessor: "class", },
+        { header: "Date ", accessor: "date", className: "hidden lg:table-cell " },
+        { header: "Start time ", accessor: "startTime", className: "hidden lg:table-cell " },
+        { header: "End time ", accessor: "endTime", className: "hidden lg:table-cell " },
+        ...(role === "admin" ? [{ header: "Action", accessor: "action" }] : []),
+    ]
 
+    const renderRow = (item: EventList) => (
+        <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
+            <td className="flex items-center gap-4 p-4 ">{item.title}</td>
+            <td >{item.class?.name || "-"}</td>
+            <td className="hidden md:table-cell">{new Intl.DateTimeFormat("en-US").format(item.startTime)}</td>
+            <td className="hidden md:table-cell">{item.startTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}</td>
+            <td className="hidden md:table-cell">{item.endTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}</td>
 
+            <td>
+                <div className="flex items-center gap-2 ">
+                    {role === "admin" && (
+                        <>
+                            <FormModal table="event" type="update" data={item} />
+                            <FormModal table="event" type="delete" id={item.id} />
+                        </>
+                    )}
+                </div>
+            </td>
+        </tr>
+    )
 
-const renderRow = (item: EventList) => (
-    <tr key={item.id} className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight">
-        <td className="flex items-center gap-4 p-4 ">{item.title}</td>
-        <td >{item.class?.name || "-"}</td>
-        <td className="hidden md:table-cell">{new Intl.DateTimeFormat("en-US").format(item.startTime)}</td>
-        <td className="hidden md:table-cell">{item.startTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}</td>
-        <td className="hidden md:table-cell">{item.endTime.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}</td>
-
-        <td>
-            <div className="flex items-center gap-2 ">
-                {role === "admin" && (
-                    <>
-                        <FormModal table="event" type="update" data={item} />
-                        <FormModal table="event" type="delete" id={item.id} />
-                    </>
-                )}
-            </div>
-        </td>
-    </tr>
-)
-
-
-const EventListPage = async ({ searchParams }: { searchParams: { [key: string]: string | undefined } }) => {
-
-    const { page, ...queryParams } = searchParams
+    const { page, ...queryParams } = resolvedSearchParams;
     const p = page ? parseInt(page) : 1;
 
     // URL  PARAMS CONDITIONS
