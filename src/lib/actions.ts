@@ -5,7 +5,7 @@ import { AssignmentSchema, ClassSchema, ExamSchema, StudentSchema, SubjectSchema
 import { prisma } from "./prisma";
 import { auth, clerkClient } from "@clerk/nextjs/server";
 
-type CurrentState = { success: boolean; error: boolean }
+type CurrentState = { success: boolean; error: boolean; message?: string }
 
 const CLERK_MIN_USERNAME_LENGTH = 4;
 const CLERK_MAX_USERNAME_LENGTH = 64;
@@ -17,6 +17,19 @@ const isInvalidClerkUsername = (username: string) => {
 
 const isInvalidClerkPassword = (password?: string) => {
     return !password || password.length < CLERK_MIN_PASSWORD_LENGTH;
+};
+
+const getClerkErrorMessage = (error: any, fallback: string) => {
+    const apiErrors = error?.errors;
+
+    if (Array.isArray(apiErrors) && apiErrors.length > 0) {
+        return apiErrors
+            .map((item: { longMessage?: string; message?: string }) => item.longMessage || item.message)
+            .filter(Boolean)
+            .join(" ");
+    }
+
+    return fallback;
 };
 
 
@@ -168,8 +181,12 @@ export const createTeacher = async (currentState: CurrentState, data: TeacherSch
 
     // What happens here?
     try {
-        if (isInvalidClerkUsername(data.username) || isInvalidClerkPassword(data.password)) {
-            return { success: false, error: true }
+        if (isInvalidClerkUsername(data.username)) {
+            return { success: false, error: true, message: "Username must be between 4 and 64 characters long." }
+        }
+
+        if (isInvalidClerkPassword(data.password)) {
+            return { success: false, error: true, message: "Password must be at least 15 characters long." }
         }
 
         const client = await clerkClient()
@@ -212,7 +229,11 @@ export const createTeacher = async (currentState: CurrentState, data: TeacherSch
 
         console.log("CLERK ERRORS:");
         console.log(JSON.stringify(error.errors, null, 2));
-        return { success: false, error: true }
+        return {
+            success: false,
+            error: true,
+            message: getClerkErrorMessage(error, "Unable to create teacher account. Please check your input and try again."),
+        }
 
     }
 }
@@ -220,16 +241,16 @@ export const createTeacher = async (currentState: CurrentState, data: TeacherSch
 
 export const updateTeacher = async (currentState: CurrentState, data: TeacherSchema) => {
     if (!data.id) {
-        return { success: false, error: true }
+        return { success: false, error: true, message: "Teacher ID is missing." }
     }
 
     try {
         if (isInvalidClerkUsername(data.username)) {
-            return { success: false, error: true }
+            return { success: false, error: true, message: "Username must be between 4 and 64 characters long." }
         }
 
         if (data.password !== "" && isInvalidClerkPassword(data.password)) {
-            return { success: false, error: true }
+            return { success: false, error: true, message: "Password must be at least 15 characters long." }
         }
 
         const client = await clerkClient()
@@ -267,12 +288,16 @@ export const updateTeacher = async (currentState: CurrentState, data: TeacherSch
 
         console.log("Updated result:", data);
 
-        // revalidatePath("/list/teachers");
+        revalidatePath("/list/teachers");
         return { success: true, error: false }
 
-    } catch (error) {
+    } catch (error: any) {
         console.log(error)
-        return { success: false, error: true }
+        return {
+            success: false,
+            error: true,
+            message: getClerkErrorMessage(error, "Unable to update teacher account. Please check your input and try again."),
+        }
 
     }
 }
@@ -320,8 +345,12 @@ export const createStudent = async (currentState: CurrentState, data: StudentSch
 
     try {
 
-        if (isInvalidClerkUsername(data.username) || isInvalidClerkPassword(data.password)) {
-            return { success: false, error: true }
+        if (isInvalidClerkUsername(data.username)) {
+            return { success: false, error: true, message: "Username must be between 4 and 64 characters long." }
+        }
+
+        if (isInvalidClerkPassword(data.password)) {
+            return { success: false, error: true, message: "Password must be at least 15 characters long." }
         }
 
         const classItem = await prisma.class.findUnique({
@@ -330,7 +359,7 @@ export const createStudent = async (currentState: CurrentState, data: StudentSch
         })
 
         if (classItem && classItem.capacity === classItem._count.students) {
-            return { success: false, error: true }
+            return { success: false, error: true, message: "Selected class is already full." }
         }
 
 
@@ -367,9 +396,13 @@ export const createStudent = async (currentState: CurrentState, data: StudentSch
         // revalidatePath("/list/students");
         return { success: true, error: false }
 
-    } catch (error) {
+    } catch (error: any) {
         console.log(error)
-        return { success: false, error: true }
+        return {
+            success: false,
+            error: true,
+            message: getClerkErrorMessage(error, "Unable to create student account. Please check your input and try again."),
+        }
 
     }
 }
@@ -377,16 +410,16 @@ export const createStudent = async (currentState: CurrentState, data: StudentSch
 
 export const updateStudent = async (currentState: CurrentState, data: StudentSchema) => {
     if (!data.id) {
-        return { success: false, error: true }
+        return { success: false, error: true, message: "Student ID is missing." }
     }
 
     try {
         if (isInvalidClerkUsername(data.username)) {
-            return { success: false, error: true }
+            return { success: false, error: true, message: "Username must be between 4 and 64 characters long." }
         }
 
         if (data.password !== "" && isInvalidClerkPassword(data.password)) {
-            return { success: false, error: true }
+            return { success: false, error: true, message: "Password must be at least 15 characters long." }
         }
 
         const client = await clerkClient()
@@ -423,9 +456,13 @@ export const updateStudent = async (currentState: CurrentState, data: StudentSch
         // revalidatePath("/list/students");
         return { success: true, error: false }
 
-    } catch (error) {
+    } catch (error: any) {
         console.log(error)
-        return { success: false, error: true }
+        return {
+            success: false,
+            error: true,
+            message: getClerkErrorMessage(error, "Unable to update student account. Please check your input and try again."),
+        }
 
     }
 }
@@ -449,7 +486,7 @@ export const deleteStudent = async (currentState: CurrentState, data: FormData) 
             },
         });
 
-        // revalidatePath("/list/students");
+        revalidatePath("/list/students");
         return { success: true, error: false }
 
     } catch (error) {
