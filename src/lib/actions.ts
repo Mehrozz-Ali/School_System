@@ -152,6 +152,9 @@ export const deleteClass = async (currentState: CurrentState, data: FormData) =>
 
 
 export const createTeacher = async (currentState: CurrentState, data: TeacherSchema) => {
+    console.log(data);
+
+    // What happens here?
     try {
         const client = await clerkClient()
         const user = await client.users.createUser({
@@ -187,8 +190,13 @@ export const createTeacher = async (currentState: CurrentState, data: TeacherSch
         // revalidatePath("/list/teachers");
         return { success: true, error: false }
 
-    } catch (error) {
+    } catch (error: any) {
         console.log(error)
+        console.log("FULL CLERK ERROR:");
+        console.log(JSON.stringify(error, null, 2));
+
+        console.log("CLERK ERRORS:");
+        console.log(JSON.stringify(error.errors, null, 2));
         return { success: false, error: true }
 
     }
