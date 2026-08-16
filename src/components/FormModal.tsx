@@ -17,13 +17,13 @@ const deleteActionMap = {
     teacher: deleteTeacher,
     student: deleteStudent,
     exam: deleteExam,
-    parent: deleteSubject,
-    lesson: deleteSubject,
-    assignment: deleteSubject,
-    result: deleteSubject,
-    attendance: deleteSubject,
-    event: deleteSubject,
-    announcement: deleteSubject,
+    // parent: deleteSubject,
+    // lesson: deleteSubject,
+    // assignment: deleteSubject,
+    // result: deleteSubject,
+    // attendance: deleteSubject,
+    // event: deleteSubject,
+    // announcement: deleteSubject,
 }
 
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
@@ -50,13 +50,13 @@ const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"), {
 })
 
 
-const ParentForm = dynamic(() => import("./forms/ParentForm"));
-const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"));
-const ClassesForm = dynamic(() => import("./forms/ClassForm"));
-const EventForm = dynamic(() => import("./forms/EventForm"));
-const LessonForm = dynamic(() => import("./forms/LessonForm"));
-const ResultForm = dynamic(() => import("./forms/ResultForm"));
-const AttendanceForm = dynamic(() => import("./forms/AttendanceForm"));
+// const ParentForm = dynamic(() => import("./forms/ParentForm"));
+// const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"));
+// const ClassesForm = dynamic(() => import("./forms/ClassForm"));
+// const EventForm = dynamic(() => import("./forms/EventForm"));
+// const LessonForm = dynamic(() => import("./forms/LessonForm"));
+// const ResultForm = dynamic(() => import("./forms/ResultForm"));
+// const AttendanceForm = dynamic(() => import("./forms/AttendanceForm"));
 
 
 
@@ -103,7 +103,7 @@ const FormModal = ({ table, type, data, id, relatedData }: FormContainerProps & 
                 setOpen(false);
                 router.refresh();
             }
-        }, [state])
+        }, [state, router])
 
         return type === "delete" && id ? (
             <form action={formAction} className="p-4 flex flex-col gap-4">
