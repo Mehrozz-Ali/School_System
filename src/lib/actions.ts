@@ -7,6 +7,18 @@ import { auth, clerkClient } from "@clerk/nextjs/server";
 
 type CurrentState = { success: boolean; error: boolean }
 
+const CLERK_MIN_USERNAME_LENGTH = 4;
+const CLERK_MAX_USERNAME_LENGTH = 64;
+const CLERK_MIN_PASSWORD_LENGTH = 15;
+
+const isInvalidClerkUsername = (username: string) => {
+    return username.length < CLERK_MIN_USERNAME_LENGTH || username.length > CLERK_MAX_USERNAME_LENGTH;
+};
+
+const isInvalidClerkPassword = (password?: string) => {
+    return !password || password.length < CLERK_MIN_PASSWORD_LENGTH;
+};
+
 
 export const createSubject = async (currentState: CurrentState, data: SubjectSchema) => {
     try {
@@ -156,6 +168,10 @@ export const createTeacher = async (currentState: CurrentState, data: TeacherSch
 
     // What happens here?
     try {
+        if (isInvalidClerkUsername(data.username) || isInvalidClerkPassword(data.password)) {
+            return { success: false, error: true }
+        }
+
         const client = await clerkClient()
         const user = await client.users.createUser({
             username: data.username,
@@ -187,9 +203,8 @@ export const createTeacher = async (currentState: CurrentState, data: TeacherSch
             }
         });
 
-        // revalidatePath("/list/teachers");
-        return { success: true, error: false }
-
+        revalidatePath("/list/teachers");
+        return { success: true, error: false };
     } catch (error: any) {
         console.log(error)
         console.log("FULL CLERK ERROR:");
@@ -209,6 +224,14 @@ export const updateTeacher = async (currentState: CurrentState, data: TeacherSch
     }
 
     try {
+        if (isInvalidClerkUsername(data.username)) {
+            return { success: false, error: true }
+        }
+
+        if (data.password !== "" && isInvalidClerkPassword(data.password)) {
+            return { success: false, error: true }
+        }
+
         const client = await clerkClient()
         const user = await client.users.updateUser(data.id, {
             username: data.username,
@@ -297,6 +320,10 @@ export const createStudent = async (currentState: CurrentState, data: StudentSch
 
     try {
 
+        if (isInvalidClerkUsername(data.username) || isInvalidClerkPassword(data.password)) {
+            return { success: false, error: true }
+        }
+
         const classItem = await prisma.class.findUnique({
             where: { id: data.classId },
             include: { _count: { select: { students: true } } }
@@ -354,6 +381,14 @@ export const updateStudent = async (currentState: CurrentState, data: StudentSch
     }
 
     try {
+        if (isInvalidClerkUsername(data.username)) {
+            return { success: false, error: true }
+        }
+
+        if (data.password !== "" && isInvalidClerkPassword(data.password)) {
+            return { success: false, error: true }
+        }
+
         const client = await clerkClient()
         const user = await client.users.updateUser(data.id, {
             username: data.username,
