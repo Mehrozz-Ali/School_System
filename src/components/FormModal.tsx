@@ -45,8 +45,12 @@ const ExamForm = dynamic(() => import("./forms/ExamForm"), {
     loading: () => <h1>Loading...</h1>
 })
 
+const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"), {
+    loading: () => <h1>Loading...</h1>
+})
+
+
 const ParentForm = dynamic(() => import("./forms/ParentForm"));
-const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"));
 const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"));
 const ClassesForm = dynamic(() => import("./forms/ClassForm"));
 const EventForm = dynamic(() => import("./forms/EventForm"));
@@ -66,13 +70,13 @@ const forms: {
     subject: (setOpen, type, data, relatedData) => <SubjectForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
     class: (setOpen, type, data, relatedData) => <ClassForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
     exam: (setOpen, type, data, relatedData) => <ExamForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
+    assignment: (setOpen, type, data, relatedData) => <AssignmentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
+
 
 
 
     // parent: (type, data) => <ParentForm type={type} data={data} />,
     // lesson: (type, data) => <LessonForm type={type} data={data} />,
-    // exam: (type, data) => <ExamForm type={type} data={data} />,
-    // assignment: (type, data) => <AssignmentForm type={type} data={data} />,
     // result: (type, data) => <ResultForm type={type} data={data} />,
     // announcement: (type, data) => <AnnouncementForm type={type} data={data} />,
     // event: (type, data) => <EventForm type={type} data={data} />,

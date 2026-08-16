@@ -14,7 +14,6 @@ const StudentPage = async () => {
     }
   })
 
-  console.log(classItems)
 
 
   return (

@@ -1,4 +1,4 @@
-import FormModel from "@/components/FormModal";
+import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -44,8 +44,8 @@ const renderRow = (item: ResultList) => (
             <div className="flex items-center gap-2 ">
                 {(role === "admin" || role === "teacher") && (
                     <>
-                        <FormModel table="result" type="update" data={item} />
-                        <FormModel table="result" type="delete" id={item.id} />
+                        <FormModal table="result" type="update" data={item} />
+                        <FormModal table="result" type="delete" id={item.id} />
                     </>
                 )}
             </div>
@@ -180,7 +180,7 @@ const ResultListPage = async ({ searchParams }: { searchParams: { [key: string]:
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
                         {(role === "admin" || role === "teacher") && (
-                            <FormModel table="result" type="create" />
+                            <FormModal table="result" type="create" />
                         )}
                     </div>
                 </div>

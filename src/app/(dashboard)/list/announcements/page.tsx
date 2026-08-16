@@ -1,4 +1,3 @@
-import FormModel from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -8,6 +7,7 @@ import { ITEM_PER_PAGE } from "@/lib/settings";
 import Image from "next/image";
 import { role } from "@/lib/data"
 import { currentUserId } from "@/lib/utils";
+import FormModal from "@/components/FormModal";
 
 
 
@@ -35,8 +35,8 @@ const renderRow = (item: AnnouncementList) => (
             <div className="flex items-center gap-2 ">
                 {role === "admin" && (
                     <>
-                        <FormModel table="announcement" type="update" data={item} />
-                        <FormModel table="announcement" type="delete" id={item.id} />
+                        <FormModal table="announcement" type="update" data={item} />
+                        <FormModal table="announcement" type="delete" id={item.id} />
                     </>
                 )}
             </div>
@@ -111,7 +111,7 @@ const AnnouncementListPage = async ({ searchParams }: { searchParams: { [key: st
                             <Image src="/sort.png" alt="" width={14} height={14} />
                         </button>
                         {role === "admin" && (
-                            <FormModel table="announcement" type="create" />
+                            <FormModal table="announcement" type="create" />
                         )}
                     </div>
                 </div>
