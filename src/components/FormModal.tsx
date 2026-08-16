@@ -1,6 +1,6 @@
 "use client"
 
-import { deleteClass, deleteSubject, deleteTeacher } from "@/lib/actions";
+import { deleteClass, deleteExam, deleteStudent, deleteSubject, deleteTeacher } from "@/lib/actions";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,10 +15,10 @@ const deleteActionMap = {
     subject: deleteSubject,
     class: deleteClass,
     teacher: deleteTeacher,
-    student: deleteSubject,
+    student: deleteStudent,
+    exam: deleteExam,
     parent: deleteSubject,
     lesson: deleteSubject,
-    exam: deleteSubject,
     assignment: deleteSubject,
     result: deleteSubject,
     attendance: deleteSubject,
@@ -41,12 +41,15 @@ const ClassForm = dynamic(() => import("./forms/ClassForm"), {
     loading: () => <h1>Loading...</h1>
 })
 
+const ExamForm = dynamic(() => import("./forms/ExamForm"), {
+    loading: () => <h1>Loading...</h1>
+})
+
 const ParentForm = dynamic(() => import("./forms/ParentForm"));
 const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"));
 const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"));
 const ClassesForm = dynamic(() => import("./forms/ClassForm"));
 const EventForm = dynamic(() => import("./forms/EventForm"));
-const ExamForm = dynamic(() => import("./forms/ExamForm"));
 const LessonForm = dynamic(() => import("./forms/LessonForm"));
 const ResultForm = dynamic(() => import("./forms/ResultForm"));
 const AttendanceForm = dynamic(() => import("./forms/AttendanceForm"));
@@ -62,6 +65,8 @@ const forms: {
     student: (setOpen, type, data, relatedData) => <StudentForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
     subject: (setOpen, type, data, relatedData) => <SubjectForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
     class: (setOpen, type, data, relatedData) => <ClassForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
+    exam: (setOpen, type, data, relatedData) => <ExamForm type={type} data={data} setOpen={setOpen} relatedData={relatedData} />,
+
 
 
     // parent: (type, data) => <ParentForm type={type} data={data} />,
@@ -90,7 +95,7 @@ const FormModal = ({ table, type, data, id, relatedData }: FormContainerProps & 
         const router = useRouter();
         useEffect(() => {
             if (state.success) {
-                toast(`Subject has been deleted! `)
+                toast(`${table} has been deleted! `)
                 setOpen(false);
                 router.refresh();
             }
