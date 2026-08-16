@@ -329,7 +329,7 @@ export const createStudent = async (currentState: CurrentState, data: StudentSch
             }
         });
 
-        // revalidatePath("/list/teachers");
+        // revalidatePath("/list/students");
         return { success: true, error: false }
 
     } catch (error) {

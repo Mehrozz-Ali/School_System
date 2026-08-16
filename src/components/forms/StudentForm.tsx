@@ -52,7 +52,7 @@ const StudentForm = ({ type, data, setOpen, relatedData }: { type: "create" | "u
 
     return (
         <form className="flex flex-col gap-8" onSubmit={onSubmit}>
-            <h1 className="text-xl font-semibold">{type === "create" ? "Create a new teacher" : "Update the teacher"}</h1>
+            <h1 className="text-xl font-semibold">{type === "create" ? "Create a new Student" : "Update the Student"}</h1>
             <span className="text-xs text-gray-500 font-medium ">Authentication Information</span>
 
             <div className="flex flex-wrap justify-between gap-4">
@@ -121,19 +121,6 @@ const StudentForm = ({ type, data, setOpen, relatedData }: { type: "create" | "u
                     </select>
                     {errors.classId?.message && <p className="text-red-400">{errors.classId.message.toString()}</p>}
                 </div>
-
-
-
-                {/* <div className="flex flex-col gap-2 w-full md:w-1/4 justify-center">
-                    <label htmlFor="img" className="text-xs text-gray-500 flex item-center gap-2 cursor-pointer">
-                        <Image src="/upload.png" alt="" width={28} height={28} />
-                        <span>Upload a Photo</span>
-                    </label>
-                    <input type="file" id="img" {...register("img")} className="hidden" />
-                    {errors.img?.message && <p className="text-red-400">{errors.img.message.toString()}</p>}
-                </div> */}
-
-
 
             </div>
 
